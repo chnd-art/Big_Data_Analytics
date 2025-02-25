@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+  hadoop-master:
+    image: yassern1/hadoop-spark-jupyter:1.0.1
+    container_name: hadoop-master-new
+    hostname: hadoop-master-new
+    networks:
+      - hadoop
+    ports:
+      - "9870:9870"
+      - "8088:8088"
+      - "8889:8888"
+      - "7077:7077"
+      - "16010:16010"
+      - "8080:8080"
+      - "9000:9000"
+    volumes:
+      - ~/Documents/hadoop_project/:/shared_volume
+      - ./scripts/:/shared_volume/scripts
+      - ./data/database.csv:/shared_volume/databse.csv  
+
+    tty: true
+    command: ["/bin/bash", "-c", "apt-get update && apt-get install -y python3-pip && pip3 install --upgrade setuptools pip cython && pip3 install numpy && service ssh start && ./start-hadoop.sh && ./start-spark.sh && tail -f /dev/null"]
+
+  hadoop-slave1:
+    image: yassern1/hadoop-spark-jupyter:1.0.1
+    container_name: hadoop-slave1-new
+    hostname: hadoop-slave1-new
+    networks:
+      - hadoop
+    ports:
+      - "8040:8042"
+    tty: true
+
+  hadoop-slave2:
+    image: yassern1/hadoop-spark-jupyter:1.0.1
+    container_name: hadoop-slave2-new
+    hostname: hadoop-slave2-new
+    networks:
+      - hadoop
+    ports:
+      - "8041:8042"
+    tty: true
+
+
+networks:
+  hadoop:
+    driver: bridge
